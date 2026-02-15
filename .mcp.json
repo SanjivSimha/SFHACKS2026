@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "crs-mcp-server": {
+            "command": "npx",
+            "args": [
+                "@crscreditapi/mcp-server"
+            ],
+            "env": {
+                "CRS_USERNAME": "sfhacks_dev32",
+                "CRS_PASSWORD": "5Y#$l3qPhhZsWXSrkwU3fNoO"
+            }
+        }
+    }
+}

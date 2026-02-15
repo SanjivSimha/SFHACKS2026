@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  REVIEWER
+}
+
+enum ApplicationStatus {
+  PENDING
+  SCREENING
+  REVIEWED
+  APPROVED
+  DENIED
+  ARCHIVED
+}
+
+enum ScreeningType {
+  IDENTITY
+  FRAUD
+  CREDIT
+  CRIMINAL
+  EVICTION
+}
+
+enum ScreeningStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  ERROR
+}
+
+enum Recommendation {
+  APPROVE
+  REVIEW
+  DENY
+}
+
+enum ProgramType {
+  SOLAR_REBATE
+  EV_CREDIT
+  WEATHERIZATION
+  CLEAN_ENERGY_BUSINESS
+  HEAT_PUMP
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(REVIEWER)
+  createdAt    DateTime @default(now())
+}
+
+model Application {
+  id                 String            @id @default(uuid())
+  programType        ProgramType
+  status             ApplicationStatus @default(PENDING)
+  applicantFirstName String
+  applicantLastName  String
+  applicantEmail     String
+  applicantPhone     String?
+  applicantSSN       String?
+  applicantDOB       DateTime?
+  applicantAddress1  String?
+  applicantAddress2  String?
+  applicantCity      String?
+  applicantState     String?
+  applicantZip       String?
+  requestedAmount    Float?
+  projectDescription String?
+  propertyAddress    String?
+  ipAddress          String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  reviewedBy         String?
+  reviewedAt         DateTime?
+  notes              String?
+
+  screeningResults ScreeningResult[]
+  fraudDecision    FraudDecision?
+}
+
+model ScreeningResult {
+  id            String          @id @default(uuid())
+  applicationId String
+  application   Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  type          ScreeningType
+  status        ScreeningStatus @default(PENDING)
+  rawResponse   Json?
+  score         Float?
+  riskLevel     String?
+  flags         Json?
+  crsRequestId  String?
+  createdAt     DateTime        @default(now())
+}
+
+model FraudDecision {
+  id              String         @id @default(uuid())
+  applicationId   String         @unique
+  application     Application    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  overallScore    Float
+  overallRisk     String
+  recommendation  Recommendation
+  factors         Json
+  signals         Json?
+  decidedAt       DateTime       @default(now())
+  overriddenBy    String?
+  overrideReason  String?
+}
