@@ -163,4 +163,4 @@ The CRS sandbox APIs only accept specific test personas. The seed data and new a
 
 ## Built With
 
-Built at SF Hacks 2026 using the [CRS Credit API](https://api-sandbox.stitchcredit.com).
+Built at SF Hacks 2026 using the [CRS Credit API](https://crscreditapi.com/).
